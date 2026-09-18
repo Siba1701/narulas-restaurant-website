@@ -82,9 +82,18 @@ function CalendarPicker({
 }) {
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState(() => {
-    const source = value || minDate || "2000-01-01";
+  const source = value || minDate;
+
+  if (source) {
     return source.slice(0, 7);
-  });
+  }
+
+  const today = new Date();
+
+  return `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}`;
+});
 
   useEffect(() => {
     const close = (event: MouseEvent) => {
@@ -123,11 +132,19 @@ function CalendarPicker({
   };
 
   const selectToday = () => {
-    if (!todayKey) return;
-    onChange(todayKey);
-    setMonth(todayKey.slice(0, 7));
-    setOpen(false);
-  };
+  const today = new Date();
+
+  const todayKey =
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  onChange(todayKey);
+
+  setMonth(
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
+  );
+
+  setOpen(false);
+};
 
   return (
     <div className="calendarPicker">
@@ -158,8 +175,22 @@ function CalendarPicker({
           ) : <span key={index} />)}
         </div>
         <div className="calendarFooter">
-          <button type="button" onClick={() => { onChange(""); setMonth((minDate || "2000-01-01").slice(0, 7)); setOpen(false); }}>Clear</button>
-          <button type="button" onClick={selectToday} disabled={!todayKey}>Today</button>
+<button
+  type="button"
+  onClick={() => {
+    onChange("");
+
+    const today = new Date();
+
+    setMonth(
+      `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
+    );
+
+    setOpen(false);
+  }}
+>
+  Clear
+</button>          <button type="button" onClick={selectToday} disabled={!todayKey}>Today</button>
         </div>
       </div>}
     </div>
